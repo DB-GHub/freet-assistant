@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "freet_logo.png", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/conversation", "dest": "/api/conversation.js" },
+    { "src": "/api/message", "dest": "/api/message.js" },
+    { "src": "/api/feedback", "dest": "/api/feedback.js" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}

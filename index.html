@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Shopping Assistant | Freet Barefoot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jost:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f3;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Announcement Bar ── */
+    .announcement-bar {
+      background: rgb(45, 65, 82);
+      color: #ffffff;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 9px 16px;
+      text-transform: uppercase;
+    }
+    .announcement-bar a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    /* ── Header ── */
+    header {
+      background: rgb(146, 190, 0);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .header-logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+    nav {
+      display: flex;
+      gap: 28px;
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    nav a:hover { opacity: 1; }
+    nav a.active {
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      opacity: 1;
+    }
+    .header-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .header-actions a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    /* ── Hero Banner ── */
+    .hero {
+      background: #1a1a1a;
+      color: #ffffff;
+      padding: 52px 40px 48px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+    .hero-icon {
+      width: 72px;
+      height: 72px;
+      background: #b5d400;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hero-icon svg {
+      width: 38px;
+      height: 38px;
+      fill: #1a1a1a;
+    }
+    .hero-text {}
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #b5d400;
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-family: 'Jost', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.72);
+      max-width: 520px;
+      line-height: 1.55;
+    }
+
+    /* ── Main Layout ── */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 48px 40px 64px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* ── Chat Container ── */
+    .chat-container {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      min-height: 680px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      background: #1a1a1a;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .chat-header-dot {
+      width: 10px;
+      height: 10px;
+      background: #b5d400;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .chat-header-text {
+      font-family: 'Jost', sans-serif;
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .chat-header-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.75rem;
+      margin-top: 1px;
+    }
+    /* ── Custom Chat UI ── */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 520px;
+      max-height: 600px;
+    }
+    .chat-msg {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .chat-msg.user {
+      flex-direction: row-reverse;
+    }
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a1a;
+    }
+    .chat-avatar img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    .chat-avatar.user-avatar {
+      background: #b5d400;
+    }
+    .chat-avatar.user-avatar svg {
+      width: 16px;
+      height: 16px;
+      fill: #1a1a1a;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #f5f5f3;
+    }
+    .chat-msg.user .chat-bubble {
+      background: #eef5c0;
+      border: 1px solid #d4e87a;
+    }
+    .chat-bubble p { margin: 0 0 6px; }
+    .chat-bubble p:last-child { margin-bottom: 0; }
+    .chat-bubble strong { font-weight: 700; }
+    /* Bold-only heading lines get extra visual weight and spacing */
+    .chat-bubble p.chat-heading {
+      margin: 10px 0 3px;
+      font-size: 0.9rem;
+      color: #2a2a2a;
+      letter-spacing: 0.01em;
+    }
+    .chat-bubble p.chat-heading:first-child { margin-top: 0; }
+
+    /* ── Feedback buttons ── */
+    .feedback-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      padding-left: 52px; /* align with bubble, past avatar width */
+    }
+    .feedback-btn {
+      background: none;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 3px 8px;
+      line-height: 1;
+      opacity: 0.55;
+      transition: opacity 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .feedback-btn:hover { opacity: 0.9; border-color: #999; }
+    .feedback-btn.active { opacity: 1; border-color: #92be00; background: #f0f7e0; }
+    /* Bullet lists */
+    .chat-bubble ul {
+      margin: 4px 0 8px 0;
+      padding-left: 1.3em;
+    }
+    .chat-bubble ul li {
+      margin-bottom: 3px;
+      line-height: 1.55;
+    }
+    .chat-bubble hr { border: none; border-top: 1px solid #e0e0e0; margin: 12px 0; }
+    .chat-bubble a { color: #5a7a00; text-decoration: underline; }
+    /* Image wrapper keeps images on their own line with consistent spacing */
+    .chat-bubble .chat-img-wrap { margin: 10px 0; }
+    .chat-bubble img {
+      max-width: 100%;
+      width: 360px;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+      border: 1px solid #e8e8e6;
+    }
+    .chat-typing {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      padding: 8px 4px;
+    }
+    .chat-typing span {
+      width: 7px;
+      height: 7px;
+      background: #b5d400;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+    .chat-input-area {
+      padding: 16px 20px;
+      border-top: 1px solid #e8e8e6;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+    }
+    .chat-input {
+      flex: 1;
+      border: 1px solid #e0e0e0;
+      border-radius: 24px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      line-height: 1.4;
+    }
+    .chat-input:focus { border-color: #b5d400; }
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #b5d400;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .chat-send-btn:hover { background: #92be00; }
+    .chat-send-btn:disabled { background: #d0d0d0; cursor: not-allowed; }
+    .chat-send-btn svg { width: 18px; height: 18px; fill: #1a1a1a; }
+    .chat-powered {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #aaa;
+      padding: 6px 0 10px;
+    }
+    .chat-powered a { color: #aaa; text-decoration: none; }
+    .chat-powered a:hover { text-decoration: underline; }
+
+    /* ── Sidebar ── */
+    .sidebar {}
+    .sidebar-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      margin-bottom: 24px;
+    }
+    .sidebar-card:last-child { margin-bottom: 0; }
+    .sidebar-card h3 {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #b5d400;
+    }
+    .tip-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tip-list li {
+      font-size: 0.88rem;
+      color: #444;
+      line-height: 1.5;
+      padding-left: 20px;
+      position: relative;
+    }
+    .tip-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #b5d400;
+      font-weight: 700;
+    }
+    .starter-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .starter-list li {
+      background: #f5f5f3;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 0.84rem;
+      color: #1a1a1a;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid #e8e8e6;
+    }
+    .starter-list li:hover {
+      background: #eef5c0;
+      border-color: #b5d400;
+    }
+    .badge-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.84rem;
+      color: #444;
+    }
+    .badge-icon {
+      width: 36px;
+      height: 36px;
+      background: #f5f5f3;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .badge-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #1a1a1a;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a1a1a;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 20px 40px;
+      letter-spacing: 0.04em;
+    }
+    footer a { color: #b5d400; text-decoration: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; padding: 28px 20px 48px; }
+      header { padding: 0 20px; }
+      nav { display: none; }
+      .hero { padding: 36px 20px; }
+      .hero-title { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <a href="https://freetbarefoot.com/pages/mailing-list" target="_blank">Claim 10% off your first order</a> &nbsp;·&nbsp; £3.50 UK delivery &nbsp;·&nbsp; 1–2 business days &nbsp;·&nbsp; 30-day easy returns
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a class="header-logo" href="https://freetbarefoot.com" target="_blank">
+      <img class="header-logo-img" src="https://freetbarefoot.com/cdn/shop/files/freet.svg?v=1724429127" alt="Freet Barefoot">
+    </a>
+    <nav>
+      <a href="https://freetbarefoot.com/collections/hiking-walking" target="_blank">Hiking &amp; Walking</a>
+      <a href="https://freetbarefoot.com/collections/everyday" target="_blank">Everyday</a>
+      <a href="https://freetbarefoot.com/collections/running" target="_blank">Running</a>
+      <a href="https://freetbarefoot.com/collections/kids" target="_blank">Kids</a>
+      <a href="#" class="active">Virtual Assistant</a>
+    </nav>
+    <div class="header-actions">
+      <a href="https://freetbarefoot.com" target="_blank">Shop All</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <div class="hero-eyebrow">Freet Virtual Shopping Assistant</div>
+      <h1 class="hero-title">Find Your Perfect Barefoot Shoe</h1>
+      <p class="hero-subtitle">Answer a few quick questions and our AI specialist will recommend the ideal Freet shoe for your activity, terrain, and style — with expert barefoot knowledge built in.</p>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Chat Embed -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-header-dot"></div>
+        <div style="flex:1;">
+          <div class="chat-header-text">Freet Shoe Choice Assistant</div>
+          <div class="chat-header-sub">Powered by AI · Typically replies instantly</div>
+        </div>
+        <button id="chatReset" title="Start a new chat" style="background:none;border:1px solid rgba(255,255,255,0.25);border-radius:6px;color:rgba(255,255,255,0.7);font-size:0.72rem;font-family:'Jost',sans-serif;letter-spacing:0.04em;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background 0.15s,color 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,0.7)'">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          New chat
+        </button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chatInput" placeholder="Ask a question or describe an issue" rows="1"></textarea>
+        <button class="chat-send-btn" id="chatSend" title="Send">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <div class="chat-powered">Powered by <a href="https://customgpt.ai" target="_blank">CustomGPT.ai</a></div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <div class="sidebar-card">
+        <h3>Try Asking</h3>
+        <ul class="starter-list">
+          <li>"I need a waterproof boot for muddy dog walks"</li>
+          <li>"What's a good barefoot shoe for the office?"</li>
+          <li>"I'm new to barefoot — where do I start?"</li>
+          <li>"Show me leather shoes for smart casual wear"</li>
+          <li>"Best trail running shoe for rocky terrain?"</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>How It Works</h3>
+        <ul class="tip-list">
+          <li>Tell the assistant how you plan to use your shoes</li>
+          <li>Answer a few short questions about terrain, style, and material preference</li>
+          <li>Receive two personalised recommendations with images and buy links</li>
+          <li>Ask follow-up questions — the assistant remembers your conversation</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Why Freet</h3>
+        <div class="badge-row">
+          <div class="badge">
+            <div class="badge-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <span>30-day easy returns on every order</span>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </div>
+            <span>£3.50 UK mainland delivery, 1–2 business days</span>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">
+              <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20c7 0 9-8 9-8s-2 3-6 3c0 0 3-2 3-7 0 0 4 2 4 7 0 0 1-7-1-12z"/></svg>
+            </div>
+            <span>Sustainable materials &amp; ethical manufacturing</span>
+          </div>
+          <div class="badge">
+            <div class="badge-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            </div>
+            <span>Designed &amp; tested in the UK</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2026 <a href="https://freetbarefoot.com" target="_blank">Freet Barefoot</a> &nbsp;·&nbsp; Virtual Shopping Assistant
+  </footer>
+
+  <!-- Custom Chat UI powered by CustomGPT API -->
+  <script>
+    const FREET_IMAGES = {
+      'Arken': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/ArkenSide_dddc18ae-8044-4e66-beae-83e4f62c8580.webp?v=1724445795',
+      'Arken 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3211-Edit-Edit-WEB-SQUARE.jpg?v=1772790092',
+      'Bootee 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3187-Edit-Edit-WEB-SQUARE.jpg?v=1772790550',
+      'Bootee M': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/BooteeMSide_7ca075ef-8ea4-48f0-8230-2e867ae6ec5b.webp?v=1724445849',
+      'Calver': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/CalverSide_7b913460-df93-4c86-af54-78b0b54ae307.webp?v=1724445809',
+      'Calver 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Calver2HeroSq.jpg?v=1772791066',
+      'Chamois': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3170-Edit-Square-Web_4615e9c6-ab6b-4fcc-882a-5fcb9b16fe5c.jpg?v=1772790271',
+      'Citee': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/CiteeSide_712abc16-f6a1-4b2c-81c7-1e8c71e65123.webp?v=1724445864',
+      'Citee 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Citee2SideSq.jpg?v=1772790332',
+      'Citee Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/CiteeJuniorSide_b6e18ccf-fefa-4235-9f4d-0ad7d3c052e3.webp?v=1724445877',
+      'Connect 4': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3215-Edit-Edit-WEB-SQUARE.jpg?v=1772790043',
+      'Danum': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5765-Edit-medium-SQ_2mb.jpg?v=1772789875',
+      'Durham': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3177-Edit-Square-Web.jpg?v=1772790366',
+      'Esk': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/EskSide_a570c2db-fd99-4d18-8348-09717a0cde3c.webp?v=1724445907',
+      'Esk 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3191-Edit-Edit-WEB-SQUARE.jpg?v=1772790225',
+      'Feldom': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/FeldomBlackSide_4c1fd452-ad5a-45af-9fd7-c4a4db09e937.webp?v=1724445930',
+      'Feldom 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20241101_Z62_7337-Square-web.jpg?v=1741772551',
+      'Feldom 3': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5768-Edit-Square-web-sq.jpg?v=1772789840',
+      'Flex': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/FlexBlackSide_01f324be-c0b0-4261-84d6-53374a48c7da.webp?v=1724445954',
+      'Flex 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3195-Edit-Edit-WEB-SQUARE.jpg?v=1772789961',
+      'Flex Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/FlexJuniorBlackSide_4f4960d8-6e4a-4e96-9974-ced4450ffbcd.webp?v=1724446005',
+      'Hoppee Junior (sizes 27-33)': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/HoppeeVelcroBlueSideSq.jpg?v=1734444136',
+      'Hoppee Junior (sizes 34-38)': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/HoppeeElasticBlueSideSq.jpg?v=1734444525',
+      'Howgill': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/HowgillBlackSide_3c5392c5-058b-4d50-8de1-9114e0dd7131.webp?v=1724446073',
+      'Impala': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/ImpalaSide_1ae321aa-5e76-4da4-8771-8ba25f1a6c05.webp?v=1724446049',
+      'Keld': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/KeldSide_a75122bd-07a5-4433-bf51-fc6f2c46f4e1.webp?v=1724446312',
+      'Keld 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/01_Keld2SideSq.jpg?v=1740350780',
+      'Keld 2 Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/01_Keld2JnrSideSq.jpg?v=1740351603',
+      'Keld 3': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5769-Edit-Square-web-sq.jpg?v=1765205302',
+      'Kidepo': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Kidepo.jpg?v=1752661074',
+      'Lundy': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5792-Edit-Square-web-sq.jpg?v=1773169475',
+      'Milo': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250211_Z62_0188-Edit-Edit-web.jpg?v=1741607771',
+      'Mooch': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/MoochBlueSideSq.jpg?v=1734449026',
+      'Mudee 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Mudee_2_Side.webp?v=1755081782',
+      'Mudee L': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/MudeeLSide_bb87e707-d8d7-49cf-b838-e38ef97a8ec0.webp?v=1724446322',
+      'Mudee L2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3183-Edit-Edit-WEB-SQUARE.jpg?v=1755002042',
+      'Nimbus': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/NimbusSide_a49456c6-f828-4f21-9576-90c352180642.webp?v=1724446123',
+      'Pace': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/PaceBlackSide_339bc344-58a4-4a2e-aed4-8e73a028bf3c.webp?v=1724446203',
+      'Richmond': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/RichmondSide_6d513e67-d423-40b4-8b20-a099673ce1ec.webp?v=1724446144',
+      'Richmond 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Richmond2SideSq.jpg?v=1734451594',
+      'Salcombe': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5785-Edit-Edit-Square-web-sq.jpg?v=1770402711',
+      'Selva': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5764-Edit-Square-web-sq.jpg?v=1765205687',
+      'Skeeby': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/SkeebySideSq.jpg?v=1734452424',
+      'Swale': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/SwaleSide_6d520650-96ee-4a5d-807d-935944770316.webp?v=1724446156',
+      'Talus 3': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Talus3Side_365b7e8b-b078-4001-bad4-1576e541d08f.webp?v=1724446236',
+      'Tanga': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/FreetTangaGreySide_a4737b19-cb5c-4136-a048-8d464891cc89.webp?v=1724445979',
+      'Tanga 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Tanga2BlackSideSq.jpg?v=1734454090',
+      'Tanga 3': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5773-Edit-Square-web-sq.jpg?v=1765194266',
+      'Tanga Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/TangaJuniorSide_1abe1172-2e59-4afb-a22b-e7bcfeac57d6.webp?v=1724446257',
+      'Tufee Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/TufeeSide_c55e4f4a-4aed-413b-a48e-de5f79aec0aa.webp?v=1724446215',
+      'Tundra': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/TundraBlackSide_3a5de1fe-34f7-42e9-b5c5-9c5ce28da677.webp?v=1724445834',
+      'Vibe': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/ViveBlackSide_bacb4a69-89e7-4562-93f0-8476af9fec7e.webp?v=1724446175',
+      'Vibe 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Vibe2BlackSideSq.jpg?v=1770132847',
+      'York': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/YorkSide_3c6b1619-6cd4-41d2-8dfe-fc00a8b8624e.webp?v=1724446226',
+      'York 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/York2Side_bd5d805b-61c7-42f1-affa-127919f656bd.webp?v=1724446343',
+      'Zennor': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/ZennorBlackSide_eb77a89f-5246-40d5-9b82-30164c3315c6.webp?v=1724446277',
+      'Zennor 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Zennor2BlackSideSq.jpg?v=1734456068',
+      'Zennor 2 Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250301_Z62_0381-Edit-web.jpg?v=1741099589',
+      'Zennor Junior': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/ZennorJuniorBlackSide_66b108e3-0e8e-4af8-8a1f-c7ea4dacf234.webp?v=1724446301',
+      'Leap 2 4+1': 'https://freetbarefoot.com/cdn/shop/files/LeapSide.webp?v=1724687554&width=1080',
+      'Stride 2 4+1': 'https://freetbarefoot.com/cdn/shop/files/Stride2Side.webp?v=1724687599&width=1080',
+      'Tarasoles Junior Sandal DIY': 'https://freetbarefoot.com/cdn/shop/files/TarasolesSide.webp?v=1724680473&width=1080'
+    };
+
+    // ── Proxy API config (API key lives server-side in Vercel env vars) ──
+    const PROXY_BASE = '/api';
+
+    let sessionId = null;
+    let isSending = false;
+
+    // ── DOM refs ──
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput    = document.getElementById('chatInput');
+    const chatSend     = document.getElementById('chatSend');
+
+    // ── Freet logo SVG for bot avatar ──
+    const BOT_AVATAR_HTML = `<div class="chat-avatar" style="background:#1a1a1a;overflow:hidden;"><img src="freet_logo.png" alt="Freet" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"></div>`;
+    const USER_AVATAR_HTML = `<div class="chat-avatar user-avatar"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>`;
+
+    // Known heading patterns the LLM outputs as plain text (no ** markers)
+    const HEADING_PATTERNS = [
+      /^requirements summary$/i,
+      /^our recommendation$/i,
+      /^also worth considering$/i,
+      /^why we recommend this$/i,
+      /^why this is a strong alternative$/i,
+      /^best for[:\s]/i,
+      /^performance strengths[:\s]/i,
+      /^material advantages[:\s]/i,
+      /^choose this instead if/i,
+      /^closing$/i,
+    ];
+
+    // ── Render plain text with [IMAGE:] tags and basic Markdown into safe HTML ──
+    function renderResponse(text) {
+      // 0. Comprehensive dash normalisation BEFORE any other processing.
+      //    Catches all Unicode dash variants and double-hyphens.
+      let html = text
+        .replace(/[\u2014\u2015\u2012\u2011]/g, ' - ')  // em-dash, horizontal bar, figure dash, non-breaking hyphen
+        .replace(/\s*\u2013\s*/g, ' - ')                 // en-dash
+        .replace(/(?<![\-])--(?![\-])/g, ' - ');         // double-hyphen (not triple)
+
+      // 1. Detect heading lines BEFORE HTML escaping (so we can match plain text cleanly)
+      //    Split on newlines, tag heading lines, then rejoin.
+      html = html.split('\n').map(line => {
+        const t = line.trim();
+        if (!t) return line;
+        // Already has ** markers — leave for step 4 to handle
+        if (t.startsWith('**') || t.startsWith('*')) return line;
+        // Check against known heading patterns
+        if (HEADING_PATTERNS.some(re => re.test(t))) {
+          return '\x00HEADING\x00' + line;
+        }
+        // Short standalone lines (≤ 40 chars, no sentence punctuation mid-line) that look like titles
+        if (t.length <= 40 && !/[,;]/.test(t) && /^[A-Z]/.test(t) && !/[.?!]$/.test(t) && !/\s{2}/.test(t)) {
+          // Only treat as heading if it doesn't look like the start of a sentence with lots of words
+          const wordCount = t.split(/\s+/).length;
+          if (wordCount <= 6) return '\x00HEADING\x00' + line;
+        }
+        return line;
+      }).join('\n');
+
+      // 2. Escape HTML entities
+      html = html
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // 3. Replace [IMAGE:Shoe Name] with <img> elements
+      html = html.replace(/\[IMAGE:([^\]]+)\]/g, (_, name) => {
+        const trimmed = name.trim();
+        const url = FREET_IMAGES[trimmed];
+        if (url) {
+          return `<img src="${url}" alt="${trimmed}" loading="lazy">`;
+        }
+        // Fuzzy fallback: case-insensitive partial match
+        const lower = trimmed.toLowerCase();
+        const key = Object.keys(FREET_IMAGES).find(k => k.toLowerCase() === lower);
+        if (key) return `<img src="${FREET_IMAGES[key]}" alt="${trimmed}" loading="lazy">`;
+        return `<em>[Image: ${trimmed}]</em>`;
+      });
+
+      // 4. Markdown links [text](url)
+      html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+        (_, linkText, url) => `<a href="${url}" target="_blank" rel="noopener">${linkText}</a>`);
+
+      // 5. Bold **text**
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+      // 6. Italic *text*
+      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+      // 7. Horizontal rules ---
+      html = html.replace(/^---+$/gm, '<hr>');
+
+      // 8. Smart line-by-line rendering
+      const lines = html.split('\n');
+      const out = [];
+      let inList = false;
+
+      const flushList = () => {
+        if (inList) { out.push('</ul>'); inList = false; }
+      };
+
+      for (const line of lines) {
+        const t = line.trim();
+        if (t === '') { flushList(); continue; }
+        if (t === '<hr>') { flushList(); out.push('<hr>'); continue; }
+        if (t.startsWith('<img ')) {
+          flushList();
+          out.push('<div class="chat-img-wrap">' + t + '</div>');
+          continue;
+        }
+        // Bullet list item
+        if (/^[-•]\s/.test(t)) {
+          if (!inList) { out.push('<ul>'); inList = true; }
+          out.push('<li>' + t.replace(/^[-•]\s+/, '') + '</li>');
+          continue;
+        }
+        flushList();
+        // Pre-tagged heading lines
+        if (t.startsWith('\x00HEADING\x00')) {
+          const content = t.replace('\x00HEADING\x00', '').trim();
+          out.push('<p class="chat-heading"><strong>' + content + '</strong></p>');
+          continue;
+        }
+        // Bold-only lines already converted by step 5
+        if (/^<strong>[^<]+<\/strong>[:.]?$/.test(t)) {
+          out.push('<p class="chat-heading">' + t + '</p>');
+        } else {
+          out.push('<p>' + t + '</p>');
+        }
+      }
+      flushList();
+
+      return out.join('\n');
+    }
+
+    // ── Append a message bubble to the chat ──
+    function appendMessage(role, htmlContent, msgId) {
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg' + (role === 'user' ? ' user' : '');
+
+      const avatar = role === 'user' ? USER_AVATAR_HTML : BOT_AVATAR_HTML;
+
+      let feedbackHtml = '';
+      if (role === 'bot' && msgId) {
+        feedbackHtml = `
+          <div class="feedback-row" data-msg-id="${msgId}">
+            <button class="feedback-btn" data-reaction="liked" title="Helpful">&#128077;</button>
+            <button class="feedback-btn" data-reaction="disliked" title="Not helpful">&#128078;</button>
+          </div>`;
+      }
+
+      const bubble = `<div class="chat-bubble">${htmlContent}</div>`;
+
+      msg.innerHTML = role === 'user'
+        ? bubble + avatar
+        : avatar + bubble + feedbackHtml;
+
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Wire up feedback buttons
+      if (feedbackHtml) {
+        const feedbackRow = msg.querySelector('.feedback-row');
+        feedbackRow.querySelectorAll('.feedback-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const reaction = btn.dataset.reaction;
+            const currentActive = feedbackRow.querySelector('.feedback-btn.active');
+            // Toggle: clicking active button sets reaction to neutral (undo)
+            const newReaction = (currentActive === btn) ? 'neutral' : reaction;
+
+            try {
+              await fetch(`${PROXY_BASE}/feedback`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId, message_id: msgId, reaction: newReaction })
+              });
+              // Update button states
+              feedbackRow.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('active'));
+              if (newReaction !== 'neutral') btn.classList.add('active');
+            } catch (e) {
+              console.error('Feedback error:', e);
+            }
+          });
+        });
+      }
+
+      return msg;
+    }
+
+    // ── Show / remove typing indicator ──
+    function showTyping() {
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg';
+      msg.id = 'typingIndicator';
+      msg.innerHTML = BOT_AVATAR_HTML +
+        `<div class="chat-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>`;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    function removeTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    // ── Create a new CustomGPT conversation via secure proxy ──
+    async function createConversation() {
+      try {
+        const res = await fetch(`${PROXY_BASE}/conversation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        sessionId = data?.data?.session_id || null;
+      } catch (err) {
+        console.error('Failed to create conversation:', err);
+      }
+    }
+
+    // ── Send a message and get the AI response ──
+    async function sendMessage(prompt) {
+      if (!sessionId) {
+        await createConversation();
+      }
+      if (!sessionId) {
+        appendMessage('bot', '<p>Sorry, I could not connect to the assistant. Please refresh and try again.</p>');
+        return;
+      }
+
+      const res = await fetch(`${PROXY_BASE}/message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, prompt })
+      });
+
+      if (!res.ok) {
+        throw new Error(`API error ${res.status}`);
+      }
+
+      const json = await res.json();
+      const text = json?.data?.openai_response || 'Sorry, I did not get a response. Please try again.';
+      const msgId = json?.data?.id || null;
+      return { text, msgId };
+    }
+
+    // ── Handle send action ──
+    async function handleSend() {
+      const prompt = chatInput.value.trim();
+      if (!prompt || isSending) return;
+
+      isSending = true;
+      chatSend.disabled = true;
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+
+      appendMessage('user', `<p>${prompt.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`);
+      showTyping();
+
+      try {
+        const { text: responseText, msgId } = await sendMessage(prompt);
+        removeTyping();
+        appendMessage('bot', renderResponse(responseText), msgId);
+      } catch (err) {
+        removeTyping();
+        console.error('Chat error:', err);
+        appendMessage('bot', '<p>Something went wrong. Please try again.</p>');
+      } finally {
+        isSending = false;
+        chatSend.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // ── Event listeners ──
+    chatSend.addEventListener('click', handleSend);
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+    // Auto-resize textarea
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+    });
+
+    // ── Sidebar "Try Asking" starters ──
+    document.querySelectorAll('.starter-list li').forEach(li => {
+      li.style.cursor = 'pointer';
+      li.title = 'Click to send this question';
+      li.addEventListener('click', () => {
+        // Strip surrounding quotes if present
+        const text = li.textContent.replace(/^["\u201c]|["\u201d]$/g, '').trim();
+        chatInput.value = text;
+        chatInput.dispatchEvent(new Event('input'));
+        chatInput.focus();
+        handleSend();
+      });
+    });
+
+    // ── Welcome message helper (used on init and reset) ──
+    async function initChat() {
+      chatMessages.innerHTML = '';
+      sessionId = null;
+      isSending = false;
+      chatSend.disabled = false;
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+      await createConversation();
+      appendMessage('bot',
+        `<p>Hi! I'm the <strong>Freet Shoe Finder</strong> — here to help you discover your perfect barefoot shoe.</p>` +
+        `<p>Tell me what you're looking for — whether it's trail running, office wear, muddy dog walks, or something else entirely — and I'll ask a few quick questions before recommending the best options for you.</p>` +
+        `<p>What will you mainly be using your shoes for?</p>`
+      );
+    }
+
+    // ── New chat / reset button ──
+    document.getElementById('chatReset').addEventListener('click', () => {
+      initChat();
+    });
+
+    // ── Initialise on page load ──
+    initChat();
+
+  </script>
+
+</body>
+</html>
