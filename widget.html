@@ -331,6 +331,7 @@
       'Lundy': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20251107_Z62_5792-Edit-Square-web-sq.jpg?v=1773169475',
       'Milo': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250211_Z62_0188-Edit-Edit-web.jpg?v=1741607771',
       'Mooch': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/MoochBlueSideSq.jpg?v=1734449026',
+      'Mudee': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/MudeeLSide_bb87e707-d8d7-49cf-b838-e38ef97a8ec0.webp?v=1724446322',
       'Mudee 2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/Mudee_2_Side.webp?v=1755081782',
       'Mudee L': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/MudeeLSide_bb87e707-d8d7-49cf-b838-e38ef97a8ec0.webp?v=1724446322',
       'Mudee L2': 'https://cdn.shopify.com/s/files/1/0899/4465/4162/files/20250630_Z62_3183-Edit-Edit-WEB-SQUARE.jpg?v=1755002042',
@@ -415,7 +416,7 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
-      html = html.replace(/\[IMAGE:([^\]]+)\]/g, (_, name) => {
+      html = html.replace(/\[image:\s*([^\]]+)\]/gi, (_, name) => {
         const trimmed = name.trim();
         const url = FREET_IMAGES[trimmed];
         if (url) return `<img src="${url}" alt="${trimmed}" loading="lazy">`;
