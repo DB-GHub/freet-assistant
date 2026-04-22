@@ -142,6 +142,27 @@
     .chat-bubble hr { border: none; border-top: 1px solid #e0e0e0; margin: 10px 0; }
     .chat-bubble a { color: #5a7a00; text-decoration: underline; }
     .chat-bubble .chat-img-wrap { margin: 10px 0; }
+    /* ── Tables ── */
+    .chat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 10px 0;
+    }
+    .chat-table th {
+      background: #1a1a1a;
+      color: #ffffff;
+      padding: 7px 10px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .chat-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #e8e8e6;
+      vertical-align: top;
+    }
+    .chat-table tr:nth-child(even) td { background: #f9f9f7; }
+    .chat-table tr:last-child td { border-bottom: none; }
     .chat-bubble img {
       max-width: 100%;
       width: 320px;
@@ -410,6 +431,36 @@
       html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
       html = html.replace(/^---+$/gm, '<hr>');
 
+      // ── Pre-process markdown tables into HTML ──
+      html = (function parseMarkdownTables(input) {
+        const tableLines = [];
+        const result = [];
+        const flushTable = () => {
+          if (tableLines.length < 2) { result.push(...tableLines); tableLines.length = 0; return; }
+          const headerCells = tableLines[0].split('|').map(c => c.trim()).filter((c, i, a) => i > 0 && i < a.length - 1 || (a.length === 1));
+          const isValidSep = /^[\s|:\-]+$/.test(tableLines[1]);
+          if (!isValidSep) { result.push(...tableLines); tableLines.length = 0; return; }
+          let tableHtml = '<table class="chat-table"><thead><tr>';
+          headerCells.forEach(c => { tableHtml += '<th>' + c + '</th>'; });
+          tableHtml += '</tr></thead><tbody>';
+          for (let i = 2; i < tableLines.length; i++) {
+            const cells = tableLines[i].split('|').map(c => c.trim()).filter((c, idx, a) => idx > 0 && idx < a.length - 1 || (a.length === 1));
+            tableHtml += '<tr>';
+            cells.forEach(c => { tableHtml += '<td>' + c + '</td>'; });
+            tableHtml += '</tr>';
+          }
+          tableHtml += '</tbody></table>';
+          result.push(tableHtml);
+          tableLines.length = 0;
+        };
+        input.split('\n').forEach(line => {
+          if (/^\s*\|/.test(line)) { tableLines.push(line); }
+          else { flushTable(); result.push(line); }
+        });
+        flushTable();
+        return result.join('\n');
+      })(html);
+
       const lines = html.split('\n');
       const out = [];
       let inList = false;
@@ -419,6 +470,7 @@
         const t = line.trim();
         if (t === '') { flushList(); continue; }
         if (t === '<hr>') { flushList(); out.push('<hr>'); continue; }
+        if (t.startsWith('<table ')) { flushList(); out.push(t); continue; }
         if (t.startsWith('<img ')) {
           flushList();
           out.push('<div class="chat-img-wrap">' + t + '</div>');
@@ -429,6 +481,13 @@
           out.push('<li>' + t.replace(/^[-•]\s+/, '') + '</li>');
           continue;
         }
+        // Handle ### headings
+        const h3match = t.match(/^###\s+(.+)/);
+        if (h3match) { flushList(); out.push('<p class="chat-heading"><strong>' + h3match[1] + '</strong></p>'); continue; }
+        const h2match = t.match(/^##\s+(.+)/);
+        if (h2match) { flushList(); out.push('<p class="chat-heading"><strong>' + h2match[1] + '</strong></p>'); continue; }
+        const h1match = t.match(/^#\s+(.+)/);
+        if (h1match) { flushList(); out.push('<p class="chat-heading"><strong>' + h1match[1] + '</strong></p>'); continue; }
         flushList();
         if (t.startsWith('\x00HEADING\x00')) {
           const content = t.replace('\x00HEADING\x00', '').trim();
