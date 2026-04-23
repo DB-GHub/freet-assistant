@@ -167,19 +167,20 @@ export default async function handler(req, res) {
   const augmentedPrompt = SYSTEM_INSTRUCTIONS + prompt;
 
   try {
+    // CustomGPT API requires multipart/form-data, not JSON
+    const formData = new FormData();
+    formData.append('prompt', augmentedPrompt);
+    formData.append('response_source', 'default');
+
     const response = await fetch(
       `https://app.customgpt.ai/api/v1/projects/${PROJECT_ID}/conversations/${session_id}/messages?stream=false`,
       {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          prompt: augmentedPrompt,
-          response_source: 'default'
-        })
+        body: formData
       }
     );
     const data = await response.json();
